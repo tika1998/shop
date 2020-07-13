@@ -4,6 +4,19 @@
 
 
 @section('content')
+
+<div>
+    @if($errors->any())
+    <div>
+    <p>
+    @foreach($errors->all() as $error)
+        <p style='color: red'>{{$error}}</p>
+    @endforeach
+    </p>
+    </div>
+    @endif
+
+</div>
 <form method='POST' action="{{route('product.update',$product->id)}}">
 @csrf
 @method('PUT')

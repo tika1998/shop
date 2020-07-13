@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Products;
 use Illuminate\Http\Request;
-
+use App\Http\Requests\ProductCreateRequest;
+use App\Http\Requests\ProductUpdateRequest;
+use Illuminate\Support\Facades\Storage;
+use App\Helper;
 class ProductsController extends Controller
 {
     /**
@@ -26,7 +29,6 @@ class ProductsController extends Controller
     public function create()
     {
         return view('products.create');
-
     }
 
     /**
@@ -35,21 +37,13 @@ class ProductsController extends Controller
      * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
-    public function store(Request $request)
+    public function store(ProductCreateRequest $request)
     {
-         $product = new Products(
-            [
-                'name' => $request->get('name'),
-                'description' => $request->get('description'),
-                'price' => $request->get('price')
-            ]
-         );
+        $product = Products::create($request->all());
 
-         $product->save();
+        $product['image'] =  Helper::image_upload($request);
 
-         return redirect('/product');
-
-
+        return redirect('/product');
 
     }
 
@@ -75,7 +69,6 @@ class ProductsController extends Controller
         $product = Products::findorfail($id);
 
         return view('/products.edit',  ['product' => $product]);
-
     }
 
     /**
@@ -85,15 +78,15 @@ class ProductsController extends Controller
      * @param  \App\Products  $products
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request,$id)
+    public function update(ProductUpdateRequest $request,$id)
     {
         $product = Products::findorfail($id);
-        $product->name = $request->name;
-        $product->description = $request->description;
-        $product->price = $request->price;
-        $product->save();
-        return redirect('/product');
 
+        if(!$product) {
+            return redirect('/product');
+        } else {
+            return redirect('/product');
+        }
     }
 
     /**
